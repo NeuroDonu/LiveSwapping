@@ -6,19 +6,19 @@ import os
 
 MODELS = {
     "reswapper128": {
-        "url": "https://huggingface.co/somanchiu/reswapper/resolve/main/reswapper-1019500.pth",
+        "url": "https://github.com/NeuroDonu/LiveSwapping/releases/download/models/reswapper-1019500.pth",
         "sha256": "212092b199452b736e8f80c16e2b578f233ab3f592334ca15f22d351f27461a7",
     },
     "reswapper256": {
-        "url": "https://huggingface.co/somanchiu/reswapper/resolve/main/reswapper_256-1567500.pth",
+        "url": "https://github.com/NeuroDonu/LiveSwapping/releases/download/models/reswapper_256-1567500.pth",
         "sha256": "db059a5cbc9d1c4c98320f15b524492fbd4747caefe20929796338c9f4ee5bd4",
     },
     "inswapper128": {
-        "url": "https://huggingface.co/ezioruan/inswapper_128.onnx/resolve/main/inswapper_128.onnx",
+        "url": "https://github.com/NeuroDonu/LiveSwapping/releases/download/models/inswapper_128.onnx",
         "sha256": "e4a3f08c753cb72d04e10aa0f7dbe3deebbf39567d4ead6dce08e98aa49e16af",
     },
     "gfpgan": {
-        "url": "https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.3.pth",
+        "url": "https://github.com/NeuroDonu/LiveSwapping/releases/download/models/GFPGANv1.3.pth",
         "sha256": "c953a88f2727c85c3d9ae72e2bd4846bbaf59fe6972ad94130e23e7017524a70",
     },
 }
