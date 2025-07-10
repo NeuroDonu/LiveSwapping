@@ -431,3 +431,15 @@ print(inspect.getfile(basicsr.data.degradations))
 2. Создайте ветку для фичи
 3. Внесите изменения
 4. Создайте Pull Request
+
+## ⭐ История звёзд
+
+<a href="https://star-history.com/#NeuroDonu/LiveSwapping&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=NeuroDonu/LiveSwapping&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=NeuroDonu/LiveSwapping&type=Date" />
+   <img alt="График истории звёзд" src="https://api.star-history.com/svg?repos=NeuroDonu/LiveSwapping&type=Date" />
+ </picture>
+</a>
+
+[![Количество звёзд во времени](https://starchart.cc/NeuroDonu/LiveSwapping.svg?variant=adaptive)](https://starchart.cc/NeuroDonu/LiveSwapping)

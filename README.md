@@ -302,3 +302,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **⭐ Star this repository if LiveSwapping helped you!** 
+
+## ⭐ Star History
+
+<a href="https://star-history.com/#NeuroDonu/LiveSwapping&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=NeuroDonu/LiveSwapping&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=NeuroDonu/LiveSwapping&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=NeuroDonu/LiveSwapping&type=Date" />
+ </picture>
+</a>
+
+[![Stargazers over time](https://starchart.cc/NeuroDonu/LiveSwapping.svg?variant=adaptive)](https://starchart.cc/NeuroDonu/LiveSwapping) 
