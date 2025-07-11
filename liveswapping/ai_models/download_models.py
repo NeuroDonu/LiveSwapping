@@ -87,7 +87,7 @@ def ensure_model(name: str):
     
     # Check if file already exists and is valid
     if dest.exists() and _sha256(dest) == info["sha256"]:
-        print(f"[SUCCESS] Model {name} already downloaded.")
+        #print(f"[SUCCESS] Model {name} already downloaded.")
         return dest
     
     print(f"[DOWNLOAD] Downloading model {name}...")

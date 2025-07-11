@@ -82,7 +82,9 @@ def parse_arguments(argv: Optional[Sequence[str]] = None):
     parser.add_argument("-w", "--weight", type=float, default=0.5, help="Adjustable weights.")
     parser.add_argument("-std", "--std", type=int, default=1, help="standard deviation for noise")
     parser.add_argument("-blur", "--blur", type=int, default=1, help="blur")
-
+    parser.add_argument("--output_path", type=str, default="output.mp4", help="Path to save the output video")
+    parser.add_argument("--model_provider", type=str, default="cpu", help="Model provider (cpu, cuda)")
+    parser.add_argument("--upscaler_provider", type=str, default="cpu", help="Upscaler provider (cpu, cuda)")
     return parser.parse_args(argv)
 
 
@@ -119,7 +121,7 @@ def get_device():
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def load_model(model_path):
+def load_model(model_path, provider_type="cpu"):
     """Загружает модель с поддержкой torch-tensorrt оптимизации.
     
     Использует новый унифицированный загрузчик из liveswapping.models
@@ -128,7 +130,7 @@ def load_model(model_path):
     from liveswapping.ai_models.models import load_model as unified_load_model
     
     # Используем унифицированный загрузчик с torch-tensorrt оптимизацией
-    return unified_load_model(str(model_path), use_tensorrt=True)
+    return unified_load_model(str(model_path), use_tensorrt=True, provider_type=provider_type)
 
 
 def swap_face(model, target_face, source_face_latent):
@@ -242,7 +244,7 @@ def main(parsed_args=None):
     )
 
     video_path = args.target_video
-    model = load_model(args.modelPath)
+    model = load_model(args.modelPath, provider_type=args.model_provider)
 
     # Проверяем наличие аудио
     video_forcheck = VideoFileClip(video_path)
@@ -352,7 +354,7 @@ def main(parsed_args=None):
     clips = ImageSequenceClip(image_filenames, fps=fps)
     if not no_audio and video_audio_clip is not None:
         clips = clips.with_audio(video_audio_clip)
-    clips.write_videofile("output.mp4", codec="libx264", audio_codec="aac")
+    clips.write_videofile(args.output_path, codec="libx264", audio_codec="aac")
 
     # cleanup
     shutil.rmtree("./temp_results2", ignore_errors=True)

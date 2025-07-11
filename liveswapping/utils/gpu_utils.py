@@ -5,12 +5,13 @@
 import numpy as np
 import torch
 from typing import Union, Optional, Any
+import sys
 
 # Try to import CuPy
 try:
     import cupy as cp
     CUPY_AVAILABLE = True
-    print("[GPU] CuPy available - GPU acceleration for numpy operations enabled")
+    #print("[GPU] CuPy available - GPU acceleration for numpy operations enabled")
 except ImportError:
     cp = None
     CUPY_AVAILABLE = False
@@ -29,7 +30,7 @@ class GPUArrayManager:
         if self.use_cupy:
             cp.cuda.Device(self.device_id).use()
             if self.verbose:
-                print(f"[GPU] Using CuPy on GPU {self.device_id}")
+                #print(f"[GPU] Using CuPy on GPU {self.device_id}")
         elif self.verbose:
             print("[CPU] Using CPU numpy operations")
     
@@ -221,8 +222,8 @@ def analyze_cupy_performance():
         print("[CPU] CuPy not available - skipping performance analysis")
         return
     
-    print("[PERF] CuPy Performance Analysis")
-    print("=" * 40)
+    #print("[PERF] CuPy Performance Analysis")
+    #print("=" * 40)
     
     # Test array sizes
     sizes = [1000, 5000, 10000]
@@ -312,18 +313,18 @@ def get_optimal_config() -> dict:
 
 def print_gpu_info():
     """Выводит информацию о доступности GPU."""
-    print("[INFO] GPU Acceleration Status:")
-    print("=" * 30)
+    #print("[INFO] GPU Acceleration Status:")
+    #print("=" * 30)
     
     config = get_optimal_config()
     
     if config['use_cupy']:
-        print(f"[GPU] CuPy: Available")
-        print(f"[INFO] Devices: {config['device_count']}")
-        print(f"[INFO] Memory: {config['memory_gb']:.1f} GB")
-        print(f"[INFO] Compute: {config['compute_capability']}")
-        print(f"[INFO] Recommended batch size: {config['recommended_batch_size']}")
-        print(f"[INFO] Mixed precision: {config['use_mixed_precision']}")
+        #print(f"[GPU] CuPy: Available")
+        #print(f"[INFO] Devices: {config['device_count']}")
+        #print(f"[INFO] Memory: {config['memory_gb']:.1f} GB")
+        #print(f"[INFO] Compute: {config['compute_capability']}")
+        #print(f"[INFO] Recommended batch size: {config['recommended_batch_size']}")
+        #print(f"[INFO] Mixed precision: {config['use_mixed_precision']}")
         
         # Performance recommendation
         cc_major = int(config['compute_capability'].split('.')[0])

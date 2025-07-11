@@ -46,7 +46,7 @@ def _create_tensorrt_model(model: torch.nn.Module, input_shape: tuple = (1, 3, 5
             require_full_compilation=False,  # Разрешаем гибридное выполнение
         )
         
-        print(f"[SUCCESS] GFPGAN/RealESRGAN model optimized with torch-tensorrt")
+        #print(f"[SUCCESS] GFPGAN/RealESRGAN model optimized with torch-tensorrt")
         return compiled_model
         
     except ImportError:

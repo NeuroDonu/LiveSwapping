@@ -59,10 +59,30 @@ def run():
     from liveswapping.core.Image import cli as image_cli
     from liveswapping.core.video import cli as video_or_realtime_cli
     
-    # Если первый аргумент - это режим (image, video, realtime), используем его
-    if len(sys.argv) > 1 and sys.argv[1] in ["image", "video", "realtime"]:
+    # Если первый аргумент - это режим, используем его
+    if len(sys.argv) > 1 and sys.argv[1] in ["image", "video", "realtime", "optimized-video", "optimized-realtime"]:
         mode = sys.argv[1]
         remaining_args = sys.argv[2:]
+        # Если пользователь указал --output или -o, ничего не меняем
+        # Если пользователь указал --output_path, преобразуем в --output для image
+        if mode == "image":
+            if any(arg.startswith("--output") or arg == "-o" for arg in remaining_args):
+                return image_cli(remaining_args)
+            # Если есть --output_path, заменить на --output
+            new_args = []
+            skip = False
+            for i, arg in enumerate(remaining_args):
+                if skip:
+                    skip = False
+                    continue
+                if arg == "--output_path" and i+1 < len(remaining_args):
+                    new_args.append("--output")
+                    new_args.append(remaining_args[i+1])
+                    skip = True
+                else:
+                    new_args.append(arg)
+            return image_cli(new_args)
+        # Остальные режимы без изменений
         
         # Обработка команды image
         if mode == "image":
@@ -74,6 +94,25 @@ def run():
         elif mode == "realtime":
             from .core.realtime import cli as realtime_cli
             return realtime_cli(remaining_args)
+        # Обработка оптимизированных версий
+        elif mode == "optimized-video":
+            print("🚀 Запуск ОПТИМИЗИРОВАННОЙ обработки видео...")
+            try:
+                from .core.video_batch import main_optimized as video_batch_main
+                return video_batch_main(remaining_args)
+            except ImportError:
+                print("❌ Оптимизированные модули недоступны")
+                print("💡 Используйте обычный режим: python run.py video")
+                return 1
+        elif mode == "optimized-realtime":
+            print("🚀 Запуск ОПТИМИЗИРОВАННОЙ реал-тайм обработки...")
+            try:
+                from .core.realtime_optimized import main_optimized as realtime_optimized_main
+                return realtime_optimized_main(remaining_args)
+            except ImportError:
+                print("❌ Оптимизированные модули недоступны")
+                print("💡 Используйте обычный режим: python run.py realtime")
+                return 1
     
     # Старая логика GUI для обратной совместимости
     parser = argparse.ArgumentParser(description="LiveSwapping - Реалтайм Face Swap")
@@ -104,13 +143,33 @@ def run():
     elif args.mode == "video":
         from .gui.video_gui import main as video_main
         return video_main()
+    elif args.mode == "optimized-realtime":
+        print("🚀 Запуск ОПТИМИЗИРОВАННОЙ реал-тайм обработки...")
+        try:
+            from .core.realtime_optimized import main_optimized as realtime_optimized_main
+            return realtime_optimized_main([])
+        except ImportError:
+            print("❌ Оптимизированные модули недоступны")
+            print("💡 Используйте обычный режим: --mode realtime")
+            return 1
+    elif args.mode == "optimized-video":
+        print("🚀 Запуск ОПТИМИЗИРОВАННОЙ обработки видео...")
+        try:
+            from .core.video_batch import main_optimized as video_batch_main
+            return video_batch_main([])
+        except ImportError:
+            print("❌ Оптимизированные модули недоступны")
+            print("💡 Используйте обычный режим: --mode video")
+            return 1
     else:  # gui
         print("[GUI] Starting LiveSwapping GUI...")
         print("Select mode:")
         print("1. Real-time processing (webcam)")
         print("2. Video processing")
+        print("3. 🚀 OPTIMIZED Real-time processing")
+        print("4. 🚀 OPTIMIZED Video processing")
         
-        choice = input("Enter number (1-2): ").strip()
+        choice = input("Enter number (1-4): ").strip()
         
         if choice == "1":
             from .gui.realtime_gui import main as realtime_main
@@ -118,6 +177,25 @@ def run():
         elif choice == "2":
             from .gui.video_gui import main as video_main
             return video_main()
+        elif choice == "3":
+            print("🚀 Запуск ОПТИМИЗИРОВАННОЙ реал-тайм обработки...")
+            try:
+                from .core.realtime_optimized import main_optimized as realtime_optimized_main
+                return realtime_optimized_main([])
+            except ImportError:
+                print("❌ Оптимизированные модули недоступны")
+                print("💡 Используйте обычный режим (1)")
+                return 1
+        elif choice == "4":
+            print("🚀 Запуск ОПТИМИЗИРОВАННОЙ обработки видео...")
+            try:
+                # Запускаем GUI в оптимизированном режиме
+                from .gui.video_gui import main_optimized as video_main_optimized
+                return video_main_optimized()
+            except ImportError as e:
+                print(f"❌ Не удалось загрузить GUI: {e}")
+                print("💡 Попробуйте запустить стандартный режим (2)")
+                return 1
         else:
             print("[ERROR] Invalid choice")
             return 1

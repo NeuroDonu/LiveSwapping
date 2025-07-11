@@ -28,7 +28,7 @@ LiveSwapping is an advanced real-time face swapping system supporting multiple m
 | **reswapper128** | StyleTransfer | 128x128 | Fast, good quality face swapping |
 | **reswapper256** | StyleTransfer | 256x256 | High quality, slower processing |
 | **inswapper128** | InsightFace | 128x128 | Industry-standard face swapping |
-| **DFM models** | Custom | Variable | Deep Face Model format support |
+| **DFM models** | Custom | Variable | Deep Face Live format support |
 
 ## 🚀 Installation
 

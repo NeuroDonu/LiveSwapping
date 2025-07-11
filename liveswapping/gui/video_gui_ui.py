@@ -156,6 +156,29 @@ class Ui_VideoGUI(object):
 
         self.filesLayout.addLayout(self.targetLayout)
 
+        self.outputLayout = QHBoxLayout()
+        self.outputLayout.setObjectName(u"outputLayout")
+        self.outputLabel = QLabel(self.filesGroup)
+        self.outputLabel.setObjectName(u"outputLabel")
+        self.outputLabel.setMinimumSize(QSize(120, 0))
+        self.outputLabel.setFont(font)
+
+        self.outputLayout.addWidget(self.outputLabel)
+
+        self.outputEdit = QLineEdit(self.filesGroup)
+        self.outputEdit.setObjectName(u"outputEdit")
+
+        self.outputLayout.addWidget(self.outputEdit)
+
+        self.outputBrowseButton = QPushButton(self.filesGroup)
+        self.outputBrowseButton.setObjectName(u"outputBrowseButton")
+        self.outputBrowseButton.setMinimumSize(QSize(100, 0))
+
+        self.outputLayout.addWidget(self.outputBrowseButton)
+
+
+        self.filesLayout.addLayout(self.outputLayout)
+
 
         self.contentLayout.addWidget(self.filesGroup)
 
@@ -441,6 +464,9 @@ class Ui_VideoGUI(object):
         self.targetLabel.setText(QCoreApplication.translate("VideoGUI", u"Target Video:", None))
         self.targetEdit.setPlaceholderText(QCoreApplication.translate("VideoGUI", u"Select video to swap faces in...", None))
         self.targetBrowseButton.setText(QCoreApplication.translate("VideoGUI", u"Browse", None))
+        self.outputLabel.setText(QCoreApplication.translate("VideoGUI", u"Output File:", None))
+        self.outputEdit.setPlaceholderText(QCoreApplication.translate("VideoGUI", u"Specify output file path (e.g. result.mp4)...", None))
+        self.outputBrowseButton.setText(QCoreApplication.translate("VideoGUI", u"Browse", None))
         self.faceSwapGroup.setTitle(QCoreApplication.translate("VideoGUI", u"Face Swap Model", None))
         self.modelLabel.setText(QCoreApplication.translate("VideoGUI", u"AI Model:", None))
         self.modelCombo.setItemText(0, QCoreApplication.translate("VideoGUI", u"reswapper128 (StyleTransfer)", None))

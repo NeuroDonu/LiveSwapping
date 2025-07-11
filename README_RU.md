@@ -4,11 +4,9 @@ LiveSwapping - это продвинутая система замены лиц 
 
 ## Поддерживаемые модели
 
-- **StyleTransfer** - собственные модели на базе PyTorch (.pth) с torch-tensorrt оптимизацией
-- **DFM** - модели Deep Face Model в формате ONNX (.onnx, .dfm)
+- **StyleTransfer (reswapper128/256)** - собственные модели на базе PyTorch (.pth) с torch-tensorrt оптимизацией
+- **DFM** - модели Deep Face Live в формате ONNX (.onnx, .dfm)
 - **inswapper128** - модель InsightFace для замены лиц (128x128)
-- **reswapper128/256** - альтернативные модели замены лиц
-
 ## Установка
 
 ### 1. Клонирование репозитория

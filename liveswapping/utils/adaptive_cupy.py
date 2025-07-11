@@ -49,7 +49,7 @@ class AdaptiveCuPyProcessor:
         
         # Log acceleration once when first used
         if use_gpu and not self._logged_acceleration:
-            print(f"[GPU] Using CuPy acceleration for {frame.shape[1]}x{frame.shape[0]} frames")
+            #print(f"[GPU] Using CuPy acceleration for {frame.shape[1]}x{frame.shape[0]} frames")
             self._logged_acceleration = True
         
         return use_gpu
@@ -227,7 +227,7 @@ def benchmark_frame_processing(frame: np.ndarray,
     }
     
     if not ACCELERATION_AVAILABLE:
-        print("❌ CuPy not available for benchmarking")
+        print(" CuPy not available for benchmarking")
         return results
     
     # Create test data
@@ -264,8 +264,8 @@ def analyze_performance():
     
     import time
     
-    print("[PERF] Analyzing CuPy vs NumPy performance...")
-    print("=" * 50)
+    #print("[PERF] Analyzing CuPy vs NumPy performance...")
+    #print("=" * 50)
     
     # Тестовые данные
     test_sizes = [
@@ -321,30 +321,30 @@ if __name__ == "__main__":
         (1080, 1920, 3),  # Full HD
     ]
     
-    print("🔬 Adaptive CuPy Performance Analysis")
-    print("=" * 50)
+    #print("🔬 Adaptive CuPy Performance Analysis")
+    #print("=" * 50)
     
     for size in test_sizes:
-        print(f"\n📺 Testing {size[1]}x{size[0]} frames:")
+        #print(f"\n📺 Testing {size[1]}x{size[0]} frames:")
         test_frame = np.random.randint(0, 256, size, dtype=np.uint8)
         
         processor = create_adaptive_processor(size[0])
         frame_info = processor.get_frame_info(test_frame)
         
-        print(f"  Resolution: {frame_info['resolution']}")
-        print(f"  Processing: {frame_info['reason']}")
+        #print(f"  Resolution: {frame_info['resolution']}")
+        #print(f"  Processing: {frame_info['reason']}")
         
         if ACCELERATION_AVAILABLE and frame_info['use_gpu']:
             benchmark = benchmark_frame_processing(test_frame)
-            print(f"  CPU time: {benchmark['cpu_time']:.4f}s")
-            print(f"  GPU time: {benchmark['gpu_time']:.4f}s")
-            print(f"  Speedup: {benchmark['speedup']:.2f}x")
+            #print(f"  CPU time: {benchmark['cpu_time']:.4f}s")
+            #print(f"  GPU time: {benchmark['gpu_time']:.4f}s")
+            #print(f"  Speedup: {benchmark['speedup']:.2f}x")
             
             if benchmark['speedup'] > 2.0:
-                print("  ✅ Significant benefit!")
+                print("  Significant benefit!")
             elif benchmark['speedup'] > 1.2:
-                print("  ⚪ Moderate benefit")
+                print("  Moderate benefit")
             else:
-                print("  ❌ Limited benefit")
+                print("  Limited benefit")
         else:
-            print("  �� CPU processing") 
+            print("  CPU processing") 

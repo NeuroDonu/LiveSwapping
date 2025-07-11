@@ -39,14 +39,11 @@ class VideoWorker(threading.Thread):
             import subprocess
             import sys
             
-            print(f"[DEBUG] VideoWorker.run() started with args: {self.args}")
-            
             # Запускаем процесс как подпроцесс для возможности его остановки
             # Используем корневой run.py вместо -m liveswapping.run для избежания проблем с Python path
             run_script = Path(__file__).parent.parent.parent / "run.py"
             cmd = [sys.executable, str(run_script)] + self.args
-            print(f"[DEBUG] Executing command: {' '.join(cmd)}")
-            
+            #print(f"[VideoWorker] Запуск процесса: {' '.join(cmd)}")
             self._process = subprocess.Popen(
                 cmd,
                 stdout=subprocess.PIPE,
@@ -55,31 +52,24 @@ class VideoWorker(threading.Thread):
                 cwd=Path(__file__).parent.parent.parent,
                 creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0
             )
-            
-            print(f"[DEBUG] Process started with PID: {self._process.pid}")
-            
+            #print("[VideoWorker] Процесс запущен, жду завершения...")
             # Ждем завершения процесса или сигнала остановки
             while self._process.poll() is None:
                 if self._stop_event.wait(timeout=0.1):
                     # Получили сигнал остановки
-                    print("[DEBUG] Stop signal received, terminating process")
                     self._terminate_process()
                     break
-            
-            # Проверяем код возврата
             returncode = self._process.returncode
-            print(f"[DEBUG] Process finished with return code: {returncode}")
-            
-            if self._process and returncode not in [0, None]:
+            #print(f"[VideoWorker] Процесс завершён с кодом: {returncode}")
+            if self._process:
                 stdout_output = self._process.stdout.read() if self._process.stdout else ""
                 stderr_output = self._process.stderr.read() if self._process.stderr else ""
-                print(f"[DEBUG] Process stdout: {stdout_output}")
-                print(f"[DEBUG] Process stderr: {stderr_output}")
-                if stderr_output and not self._stop_event.is_set():
-                    raise Exception(f"Process failed with code {returncode}: {stderr_output}")
-                    
+                #print(f"[VideoWorker] STDOUT:\n{stdout_output}")
+                print(f"[VideoWorker] STDERR:\n{stderr_output}")
+                if returncode not in [0, None]:
+                    if stderr_output and not self._stop_event.is_set():
+                        raise Exception(f"Process failed with code {returncode}: {stderr_output}")
         except Exception as e:
-            print(f"[DEBUG] Exception in VideoWorker.run(): {e}")
             if not self._stop_event.is_set():  # Не показываем ошибку если мы сами остановили
                 self.exc = e
 
@@ -128,10 +118,11 @@ class VideoWorker(threading.Thread):
 
 
 class VideoGUI(QWidget):
-    def __init__(self):
+    def __init__(self, use_optimized: bool = False):
         super().__init__()
         self._worker: VideoWorker | None = None
-        self._current_mode: int = 1  # 0 = Image to Image, 1 = Image to Video (по умолчанию)
+        self._current_mode: int = 1 # 1 for video, 0 for image
+        self.use_optimized = use_optimized
         
         # Загрузка UI
         self.ui = Ui_VideoGUI()
@@ -573,6 +564,7 @@ class VideoGUI(QWidget):
         self.ui.startButton.clicked.connect(self._start)
         self.ui.stopButton.clicked.connect(self._stop)
         self.ui.languageCombo.currentIndexChanged.connect(self._change_language)
+        self.ui.outputBrowseButton.clicked.connect(self._browse_output)
 
     # ------------------------------------------------------------------
     # Provider detection and selection (simplified for basic UI)
@@ -669,6 +661,17 @@ class VideoGUI(QWidget):
         if path:
             self.ui.modelPathEdit.setText(path)
 
+    def _browse_output(self):
+        from PySide6.QtWidgets import QFileDialog
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Select Output File",
+            "",
+            "Videos (*.mp4 *.avi *.mov *.mkv);;Images (*.jpg *.png *.jpeg *.bmp *.tif *.tiff);;All Files (*)"
+        )
+        if file_path:
+            self.ui.outputEdit.setText(file_path)
+
     # ------------------------------------------------------------------
     # Model selection handler
     # ------------------------------------------------------------------
@@ -761,10 +764,10 @@ class VideoGUI(QWidget):
         self._current_mode = current_mode  # Сохраняем для использования в _on_worker_finished
         
         # Отладочная информация
-        print(f"[DEBUG] Source path: {src_path}")
-        print(f"[DEBUG] Target path: {tgt_path}")
-        print(f"[DEBUG] Model path: {model_path}")
-        print(f"[DEBUG] Current mode: {current_mode}")
+        #print(f"Source path: {src_path}")
+        #print(f"Target path: {tgt_path}")
+        #print(f"Model path: {model_path}")
+        #print(f"Current mode: {current_mode}")
         
         if not src_path.exists():
             QMessageBox.warning(self, loc.get("missing_source"), loc.get("select_valid_source"))
@@ -788,14 +791,21 @@ class VideoGUI(QWidget):
                 "--modelPath", str(model_path),
                 "--resolution", str(self.ui.resolutionSpinBox.value()),
             ]
+            output_path = self.ui.outputEdit.text().strip()
+            if output_path:
+                args.extend(["--output", output_path])
         else:  # Image to Video
+            mode_arg = "optimized-video" if self.use_optimized else "video"
             args = [
-                "video",
+                mode_arg,
                 "--source", str(src_path),
                 "--target_video", str(tgt_path),
                 "--modelPath", str(model_path),
                 "--resolution", str(self.ui.resolutionSpinBox.value()),
             ]
+            output_path = self.ui.outputEdit.text().strip()
+            if output_path:
+                args.extend(["--output_path", output_path])
         
         # Add model provider argument
         model_provider = self.ui.modelProviderCombo.currentData()
@@ -828,14 +838,14 @@ class VideoGUI(QWidget):
             args.append("--mouth_mask")
 
         # Отладочная информация
-        print(f"[DEBUG] Final args: {args}")
-        print(f"[DEBUG] Starting VideoWorker...")
+        #print(f"Final args: {args}")
+        #print(f"Starting VideoWorker...")
 
         # Start processing
         self._worker = VideoWorker(args)
         self._worker.start()
         
-        print(f"[DEBUG] VideoWorker started")
+        #print(f"VideoWorker started")
         
         # Update UI
         self.ui.startButton.setEnabled(False)
@@ -870,45 +880,42 @@ class VideoGUI(QWidget):
     def _monitor_worker(self):
         """Monitors the worker thread and updates UI when done."""
         if not self._worker:
-            print("[DEBUG] _monitor_worker: No worker found")
+            print("No worker found")
             return
             
-        print("[DEBUG] _monitor_worker: Waiting for worker to finish...")
+        #print("Waiting for worker to finish...")
         self._worker.join()
-        print("[DEBUG] _monitor_worker: Worker finished, scheduling UI update")
+        #print("Worker finished, scheduling UI update")
         
         # Update UI on main thread
         QTimer.singleShot(0, self._on_worker_finished)
 
     def _on_worker_finished(self):
         """Called when worker finishes - updates UI."""
-        print("[DEBUG] _on_worker_finished: Called")
         
         if self._worker and self._worker.exc:
-            print(f"[DEBUG] Worker exception: {self._worker.exc}")
+            print(f"Worker exception: {self._worker.exc}")
+            # Показываем только текст исключения (без лишних логов и заголовков)
             QMessageBox.critical(
                 self, 
                 loc.get("processing_error"), 
-                f"{loc.get('error_occurred')}\n\n{str(self._worker.exc)}"
+                str(self._worker.exc)
             )
+            self._stop()  # Имитация нажатия кнопки стоп
+            return
         elif self._worker and self._worker._stop_event.is_set():
             # Процесс был остановлен пользователем - не показываем сообщение
-            print("[DEBUG] Process was stopped by user")
+            #print("Process was stopped by user")
             pass
         else:
-            # Процесс завершился успешно
-            print("[DEBUG] Process completed successfully")
             if self._current_mode == 0:  # Image to Image
                 success_message = loc.get("image_completed")
+                QMessageBox.information(self, loc.get("success"), success_message)
+                self._reset_ui()  # Явный сброс UI
+                return
             else:  # Image to Video
                 success_message = loc.get("video_completed")
-            
-            QMessageBox.information(
-                self, 
-                loc.get("success"), 
-                success_message
-            )
-        
+                QMessageBox.information(self, loc.get("success"), success_message)
         self._reset_ui()
 
     def _reset_ui(self):
@@ -1037,6 +1044,22 @@ def main():
     
     return app.exec()
 
+def main_optimized():
+    app = QApplication(sys.argv)
+    
+    # Set application properties
+    app.setApplicationName("LiveSwapping")
+    app.setApplicationVersion("2.0")
+    app.setOrganizationName("LiveSwapping Team")
+    
+    # Enable high DPI scaling
+    app.setAttribute(Qt.ApplicationAttribute.AA_EnableHighDpiScaling)
+    app.setAttribute(Qt.ApplicationAttribute.AA_UseHighDpiPixmaps)
+    
+    gui = VideoGUI(use_optimized=True)
+    gui.show()
+    
+    return app.exec()
 
 if __name__ == "__main__":
     sys.exit(main()) 

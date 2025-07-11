@@ -82,7 +82,7 @@ def fix_degradations_file(file_path: Path) -> bool:
         backup_path = file_path.with_suffix('.py.backup')
         with backup_path.open('w', encoding='utf-8') as f:
             f.write(content)
-        print(f"📦 Created backup: {backup_path}")
+        #print(f"📦 Created backup: {backup_path}")
         
         # Заменяем проблемную строку
         old_import = "from torchvision.transforms.functional_tensor import rgb_to_grayscale"
@@ -95,7 +95,7 @@ def fix_degradations_file(file_path: Path) -> bool:
             with file_path.open('w', encoding='utf-8') as f:
                 f.write(content)
             
-            print(f"[SUCCESS] Fixed file: {file_path}")
+            #print(f"[SUCCESS] Fixed file: {file_path}")
             return True
         else:
             print(f"[WARNING] Problematic line not found in {file_path}")
@@ -121,11 +121,11 @@ def verify_fix(file_path: Path) -> bool:
 
 def main():
     """Main function for automatic basicsr fixing."""
-    print("🔧 Automatic fix for basicsr degradations.py")
-    print("=" * 50)
+    #print("🔧 Automatic fix for basicsr degradations.py")
+    #print("=" * 50)
     
     # Search for degradations.py files
-    print("🔍 Searching for basicsr degradations.py files...")
+    #print("🔍 Searching for basicsr degradations.py files...")
     degradations_files = find_basicsr_degradations()
     
     if not degradations_files:
@@ -134,36 +134,31 @@ def main():
         print("   pip install basicsr")
         return
     
-    print(f"[SUCCESS] Found {len(degradations_files)} file(s)")
+    #print(f"[SUCCESS] Found {len(degradations_files)} file(s)")
     
     fixed_count = 0
     for file_path in degradations_files:
-        print(f"\n[CHECK] Checking: {file_path}")
+        #print(f"\n[CHECK] Checking: {file_path}")
         
         if not check_degradations_file(file_path):
-            print("[OK] File already fixed or doesn't contain problematic line")
+            #print("[OK] File already fixed or doesn't contain problematic line")
             continue
         
-        print("🔧 Fix required...")
+        #print("🔧 Fix required...")
         
         if fix_degradations_file(file_path):
             if verify_fix(file_path):
-                print("✅ Fix applied successfully")
+                #print("✅ Fix applied successfully")
                 fixed_count += 1
             else:
-                print("❌ Error verifying fix")
+                print(" Error verifying fix")
         else:
-            print("❌ Failed to apply fix")
+            print("Failed to apply fix")
     
-    print("\n" + "=" * 50)
-    if fixed_count > 0:
-        print(f"🎉 Successfully fixed {fixed_count} file(s)")
-        print("📺 Video processing should now work correctly")
-    else:
-        print("ℹ️ No files requiring fixes found")
+    #print("\n" + "=" * 50)
     
-    print("\n💡 Note: This fix is only needed for video processing")
-    print("   Real-time face swap works without this fix")
+    #print("\n💡 Note: This fix is only needed for video processing")
+    #print("   Real-time face swap works without this fix")
 
 if __name__ == "__main__":
     main() 

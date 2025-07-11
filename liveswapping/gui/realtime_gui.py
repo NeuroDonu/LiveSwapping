@@ -685,7 +685,8 @@ class RealtimeGUI(QWidget):
             )
         elif self._worker and self._worker._stop_event.is_set():
             # Процесс был остановлен пользователем - не показываем сообщение
-            pass
+            self._reset_ui()
+            return
         else:
             # Процесс завершился успешно
             QMessageBox.information(
@@ -693,7 +694,6 @@ class RealtimeGUI(QWidget):
                 loc.get("success"), 
                 "Realtime processing completed successfully!"
             )
-        
         self._reset_ui()
 
     def _reset_ui(self):

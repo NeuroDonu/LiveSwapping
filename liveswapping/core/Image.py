@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 from typing import Sequence, Optional
 from pathlib import Path
+import sys
 
 __all__ = ["cli", "main", "parse_arguments"]
 
@@ -49,11 +50,6 @@ def main(parsed_args=None):
     """Выполняет замену лиц в изображении.""" 
     args = parsed_args or parse_arguments()
     
-    print(f"[IMAGE] Processing image: {args.target}")
-    print(f"[SOURCE] Source: {args.source}")
-    print(f"[MODEL] Model: {args.modelPath}")
-    print("[INFO] Processing single image...")
-    
     # Импорты для обработки изображений
     import cv2
     import numpy as np
@@ -70,11 +66,11 @@ def main(parsed_args=None):
     faceAnalysis.prepare(ctx_id=0, det_size=(512, 512))
     
     # Загрузка модели
-    print(f"[MODEL] Loading model: {args.modelPath}")
+    #print(f"[MODEL] Loading model: {args.modelPath}")
     model = load_model(args.modelPath, provider_type=args.model_provider)
     
     # Загрузка изображений
-    print("[INPUT] Loading images...")
+    #print("[INPUT] Loading images...")
     source_image = cv2.imread(args.source)
     target_image = cv2.imread(args.target)
     
@@ -83,27 +79,27 @@ def main(parsed_args=None):
     if target_image is None:
         raise ValueError(f"Could not load target image: {args.target}")
     
-    print(f"[INPUT] Source image shape: {source_image.shape}")
-    print(f"[INPUT] Target image shape: {target_image.shape}")
+    #print(f"[INPUT] Source image shape: {source_image.shape}")
+    #print(f"[INPUT] Target image shape: {target_image.shape}")
     
     # Поиск лиц в source изображении
-    print("[FACE] Detecting faces in source image...")
+    #print("[FACE] Detecting faces in source image...")
     source_faces = faceAnalysis.get(source_image)
     if len(source_faces) == 0:
         raise ValueError("No faces found in source image")
     source_face = source_faces[0]
-    print(f"[FACE] Found {len(source_faces)} face(s) in source image")
+    #print(f"[FACE] Found {len(source_faces)} face(s) in source image")
     
     # Поиск лиц в target изображении  
-    print("[FACE] Detecting faces in target image...")
+    #print("[FACE] Detecting faces in target image...")
     target_faces = faceAnalysis.get(target_image)
     if len(target_faces) == 0:
         raise ValueError("No faces found in target image")
     target_face = target_faces[0]
-    print(f"[FACE] Found {len(target_faces)} face(s) in target image")
+    #print(f"[FACE] Found {len(target_faces)} face(s) in target image")
     
     # Выполнение face swap
-    print("[SWAP] Performing face swap...")
+    #print("[SWAP] Performing face swap...")
     
     # Выравнивание source лица
     source_face_landmark = source_face.kps
@@ -134,12 +130,12 @@ def main(parsed_args=None):
             swapped_face = (swapped_tensor.squeeze(0).permute(1, 2, 0).cpu().numpy() * 255.0).astype(np.uint8)
     
     # Смешивание результата с оригинальным изображением
-    print("[BLEND] Blending result...")
+    #print("[BLEND] Blending result...")
     result_image = Image.blend_swapped_image(swapped_face, target_image, M)
     
     # Upscaling если требуется
     if args.upscale > 1:
-        print(f"[UPSCALE] Applying {args.upscale}x upscaling...")
+        #print(f"[UPSCALE] Applying {args.upscale}x upscaling...")
         try:
             from liveswapping.utils.upscalers import create_optimized_gfpgan
             
@@ -171,7 +167,7 @@ def main(parsed_args=None):
             
             # Применение upscaling
             _, result_image, _ = restorer.upscale(result_image)
-            print("[SUCCESS] Upscaling completed")
+            #print("[SUCCESS] Upscaling completed")
             
         except Exception as e:
             print(f"[WARNING] Upscaling failed: {e}")
@@ -183,8 +179,9 @@ def main(parsed_args=None):
     
     success = cv2.imwrite(str(output_path), result_image)
     if success:
-        print(f"[SAVED] Result saved as: {output_path}")
-        print(f"[SUCCESS] Image processing completed!")
+        pass
+        #print(f"[SAVED] Result saved as: {output_path}")
+        #print(f"[SUCCESS] Image processing completed!")
     else:
         print(f"[ERROR] Failed to save result to: {output_path}")
         return 1
@@ -196,9 +193,9 @@ def main(parsed_args=None):
 # ---------------------------------------------------------------------------
 
 def cli(argv: Optional[Sequence[str]] = None):
-    """CLI-обёртка: парсит `argv` и запускает `main`."""
     args = parse_arguments(argv)
-    main(args)
+    exit_code = main(args)
+    sys.exit(exit_code)
 
 if __name__ == "__main__":
     cli() 

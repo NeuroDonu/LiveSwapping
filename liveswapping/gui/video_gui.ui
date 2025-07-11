@@ -320,6 +320,49 @@
             </item>
            </layout>
           </item>
+          <item>
+           <layout class="QHBoxLayout" name="outputLayout">
+            <item>
+             <widget class="QLabel" name="outputLabel">
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Output File:</string>
+              </property>
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="outputEdit">
+              <property name="placeholderText">
+               <string>Specify output file path (e.g. result.mp4)...</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="outputBrowseButton">
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Browse</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
          </layout>
         </widget>
        </item>

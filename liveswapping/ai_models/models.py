@@ -251,7 +251,7 @@ def _create_tensorrt_model(model: torch.nn.Module, input_shape: tuple = (1, 3, 1
             min_block_size=3,  # Минимальный размер блока для TensorRT
         )
         
-        print("[SUCCESS] Модель успешно оптимизирована с torch-tensorrt")
+        #print("[SUCCESS] Модель успешно оптимизирована с torch-tensorrt")
         return compiled_model
         
     except ImportError:
@@ -467,7 +467,7 @@ def _configure_torch_backend(provider_type: Optional[str] = None) -> str:
     if provider_type == "cuda":
         try:
             import torch_tensorrt
-            print(f"[SUCCESS] TensorRT available for PyTorch: {torch_tensorrt.__version__}")
+            #print(f"[SUCCESS] TensorRT available for PyTorch: {torch_tensorrt.__version__}")
         except ImportError:
             print("[WARNING] torch-tensorrt not available, using standard CUDA")
         
@@ -478,7 +478,7 @@ def _configure_torch_backend(provider_type: Optional[str] = None) -> str:
         try:
             import torch_directml
             device = torch_directml.device()
-            print(f"[SUCCESS] DirectML device: {device}")
+            #print(f"[SUCCESS] DirectML device: {device}")
             device_str = str(device)
         except ImportError:
             print("[WARNING] torch-directml not available, falling back to CPU")
@@ -489,7 +489,7 @@ def _configure_torch_backend(provider_type: Optional[str] = None) -> str:
         try:
             import torch_directml
             device = torch_directml.device()
-            print(f"[SUCCESS] Using DirectML for PyTorch on Intel: {device}")
+            #print(f"[SUCCESS] Using DirectML for PyTorch on Intel: {device}")
             device_str = str(device)
         except ImportError:
             print("[INFO] DirectML not available, using CPU for PyTorch")
@@ -527,7 +527,7 @@ def compile_with_tensorrt(model, input_shapes: Dict[str, tuple], precision: str 
             print("[WARNING] CUDA not available, skipping TensorRT compilation")
             return model
         
-        print(f"[COMPILE] Compiling model with TensorRT ({precision})...")
+        #print(f"[COMPILE] Compiling model with TensorRT ({precision})...")
         
         # Настройка точности
         if precision == "fp16":
@@ -550,7 +550,7 @@ def compile_with_tensorrt(model, input_shapes: Dict[str, tuple], precision: str 
                 dtype=list(enabled_precisions)[0]
             )
             inputs.append(tensor_input)
-            print(f"Input '{name}': {shape}")
+            #print(f"Input '{name}': {shape}")
         
         # Компиляция модели
         trt_model = torch_tensorrt.compile(
@@ -561,7 +561,7 @@ def compile_with_tensorrt(model, input_shapes: Dict[str, tuple], precision: str 
             min_block_size=3
         )
         
-        print("[SUCCESS] TensorRT compilation successful!")
+        #print("[SUCCESS] TensorRT compilation successful!")
         return trt_model
         
     except Exception as e:
