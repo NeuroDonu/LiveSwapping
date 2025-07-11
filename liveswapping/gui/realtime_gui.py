@@ -99,8 +99,8 @@ class RealtimeWorker(threading.Thread):
             # В крайнем случае пытаемся kill
             try:
                 self._process.kill()
-            except:
-                pass
+            except Exception as e:
+                print(f"[WARNING] Не удалось завершить процесс: {e}")
 
     def stop(self):
         """Остановка выполнения процесса."""

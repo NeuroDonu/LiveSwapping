@@ -272,7 +272,7 @@ class AsyncFrameProcessor:
                         self.output_queue.get(block=False)
                         self.output_queue.put((processed_frame, frame_id, process_time), block=False)
                     except queue.Empty:
-                        pass
+                        print("[WARNING] Не удалось обновить очередь результатов")
                 
             except queue.Empty:
                 continue

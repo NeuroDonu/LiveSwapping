@@ -157,7 +157,7 @@ class AsyncFrameReader:
         try:
             self.frame_queue.put(None, timeout=1.0)
         except queue.Full:
-            pass
+            print("[WARNING] Не удалось отправить сигнал окончания в очередь кадров")
             
     def get_frame(self) -> Optional[Tuple[int, np.ndarray, float]]:
         """Получить следующий кадр."""

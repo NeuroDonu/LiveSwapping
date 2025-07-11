@@ -202,8 +202,7 @@ class OptimizedVideoProcessor:
         
         gpu_info = get_gpu_memory_info()
         if gpu_info["total"] > 0:
-            pass
-            #print(f"  - GPU память: {gpu_info['total']:.1f}GB (доступно: {gpu_info['free']:.1f}GB)")
+            print(f"  - GPU память: {gpu_info['total']:.1f}GB (доступно: {gpu_info['free']:.1f}GB)")
         
     def process_video(self) -> str:
         """Обработать видео с оптимизациями."""
@@ -362,14 +361,12 @@ class OptimizedVideoProcessor:
             #print(f"  - Отброшено кадров: {self.stats.dropped_frames}")
             
             if batch_stats:
-                pass
-                #print(f"  - Средняя FPS батчей: {batch_stats.get('avg_fps', 0):.1f}")
-                #print(f"  - Оптимальный размер батча: {batch_stats.get('optimal_batch_size', 'N/A')}")
+                print(f"  - Средняя FPS батчей: {batch_stats.get('avg_fps', 0):.1f}")
+                print(f"  - Оптимальный размер батча: {batch_stats.get('optimal_batch_size', 'N/A')}")
             
             gpu_info = get_gpu_memory_info()
             if gpu_info["total"] > 0:
-                pass
-                #print(f"  - GPU память: {gpu_info['used']:.1f}/{gpu_info['total']:.1f}GB ({gpu_info['utilization']*100:.1f}%)")
+                print(f"  - GPU память: {gpu_info['used']:.1f}/{gpu_info['total']:.1f}GB ({gpu_info['utilization']*100:.1f}%)")
     
     def _assemble_video(self, frames_dir: Path) -> str:
         """Собрать видео из обработанных кадров."""

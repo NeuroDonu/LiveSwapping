@@ -179,9 +179,8 @@ def main(parsed_args=None):
     
     success = cv2.imwrite(str(output_path), result_image)
     if success:
-        pass
-        #print(f"[SAVED] Result saved as: {output_path}")
-        #print(f"[SUCCESS] Image processing completed!")
+        print(f"[SAVED] Result saved as: {output_path}")
+        print(f"[SUCCESS] Image processing completed!")
     else:
         print(f"[ERROR] Failed to save result to: {output_path}")
         return 1

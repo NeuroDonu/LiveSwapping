@@ -670,7 +670,7 @@ class AsyncFrameReader:
         try:
             self.frame_buffer.put(None, timeout=1.0)
         except queue.Full:
-            pass
+            print("[WARNING] Не удалось отправить сигнал окончания в буфер кадров")
         
         #print(f"[ASYNC] Чтение завершено: {self.current_frame}/{self.total_frames}")
     

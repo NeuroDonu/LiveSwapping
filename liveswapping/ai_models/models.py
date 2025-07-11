@@ -67,7 +67,7 @@ def _detect_available_providers() -> Dict[str, bool]:
         providers["openvino"] = "OpenVINOExecutionProvider" in available
         
     except ImportError:
-        pass
+        print("[WARNING] ONNX Runtime не установлен, провайдеры недоступны")
     
     return providers
 

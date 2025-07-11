@@ -103,8 +103,8 @@ class VideoWorker(threading.Thread):
             # В крайнем случае пытаемся kill
             try:
                 self._process.kill()
-            except:
-                pass
+            except Exception as e:
+                print(f"[WARNING] Не удалось завершить процесс: {e}")
 
     def stop(self):
         """Остановка выполнения процесса."""
@@ -582,7 +582,7 @@ class VideoGUI(QWidget):
             if torch.cuda.is_available():
                 providers.append(("cuda", loc.get("provider_cuda")))
         except ImportError:
-            pass
+            print("[WARNING] PyTorch не установлен, CUDA недоступен")
             
         return providers
     
@@ -601,14 +601,16 @@ class VideoGUI(QWidget):
     def _model_provider_selected(self):
         """Обработка смены провайдера для модели."""
         current_provider = self.ui.modelProviderCombo.currentData()
-        # Тихо обновляем, без логов при каждом изменении
-        pass
+        # Обновляем настройки модели в соответствии с выбранным провайдером
+        if current_provider:
+            print(f"[INFO] Выбран провайдер модели: {current_provider}")
     
     def _upscaler_provider_selected(self):
         """Обработка смены провайдера для upscaler."""
         current_provider = self.ui.upscalerProviderCombo.currentData()
-        # Тихо обновляем, без логов при каждом изменении
-        pass
+        # Обновляем настройки upscaler в соответствии с выбранным провайдером
+        if current_provider:
+            print(f"[INFO] Выбран провайдер upscaler: {current_provider}")
     
     def _upscaler_toggled(self, checked):
         """Обработка переключения чекбокса апскейлера."""
@@ -764,10 +766,10 @@ class VideoGUI(QWidget):
         self._current_mode = current_mode  # Сохраняем для использования в _on_worker_finished
         
         # Отладочная информация
-        #print(f"Source path: {src_path}")
-        #print(f"Target path: {tgt_path}")
-        #print(f"Model path: {model_path}")
-        #print(f"Current mode: {current_mode}")
+        print(f"Source path: {src_path}")
+        print(f"Target path: {tgt_path}")
+        print(f"Model path: {model_path}")
+        print(f"Current mode: {current_mode}")
         
         if not src_path.exists():
             QMessageBox.warning(self, loc.get("missing_source"), loc.get("select_valid_source"))
@@ -905,8 +907,7 @@ class VideoGUI(QWidget):
             return
         elif self._worker and self._worker._stop_event.is_set():
             # Процесс был остановлен пользователем - не показываем сообщение
-            #print("Process was stopped by user")
-            pass
+            print("Process was stopped by user")
         else:
             if self._current_mode == 0:  # Image to Image
                 success_message = loc.get("image_completed")
